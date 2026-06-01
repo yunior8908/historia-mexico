@@ -7,13 +7,19 @@ import type { NextConfig } from "next";
 // `next dev` and a plain `next build` are unaffected.
 const isGithubPages = process.env.GITHUB_PAGES === "true";
 
-const nextConfig: NextConfig = isGithubPages
-  ? {
-      output: "export",
-      basePath: "/historia-mexico",
-      trailingSlash: true,
-      images: { unoptimized: true },
-    }
-  : {};
+const nextConfig: NextConfig = {
+  // Enables React's View Transitions integration: Next wraps every
+  // `<Link>` navigation in `document.startViewTransition()`, so the
+  // browser can animate the swap. The actual animation lives in
+  // `globals.css` (root crossfade + reduced-motion guard) — no React
+  // `<ViewTransition>` component is imported, only CSS is used.
+  experimental: { viewTransition: true },
+  ...(isGithubPages && {
+    output: "export",
+    basePath: "/historia-mexico",
+    trailingSlash: true,
+    images: { unoptimized: true },
+  }),
+};
 
 export default nextConfig;

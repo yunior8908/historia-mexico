@@ -154,11 +154,50 @@ body {
     );
 }
 
+/* View Transitions API: Next.js wraps every `<Link>` navigation in
+   `document.startViewTransition()` once `experimental.viewTransition`
+   is on. The default browser behavior is an opacity crossfade on the
+   `root` pseudo-element; the rules below tighten the timing and add
+   a tiny upward translate on the entering snapshot so the new route
+   reads as "arriving" rather than just appearing. */
+::view-transition-old(root) {
+  animation: 180ms ease-out both vt-fade-out;
+}
+::view-transition-new(root) {
+  animation: 220ms ease-in 60ms both vt-fade-in;
+}
+
+@keyframes vt-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes vt-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.001ms !important;
     transition-duration: 0.001ms !important;
+  }
+
+  /* The `*` selector above does not reach the view-transition
+     pseudo-element tree; cancel those animations explicitly. */
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-group(*) {
+    animation-duration: 0.001ms !important;
+    animation-delay: 0s !important;
   }
 }
