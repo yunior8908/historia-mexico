@@ -41,31 +41,41 @@ list, flashcards and quiz.
 
 ## Local development
 
+The project uses [Bun](https://bun.sh) as the package manager and
+script runner. Bun records every platform-specific optional
+dependency in `bun.lock`, which is what makes the GitHub Pages
+build on Linux work from a lockfile generated on macOS — npm
+silently drops those entries.
+
 ```bash
-npm install
-npm run dev
+bun install
+bun run dev
 # → http://localhost:3000
 ```
 
-`npm run build` produces a normal Next.js build. To preview the
+`bun run build` produces a normal Next.js build. To preview the
 static export that GitHub Pages serves:
 
 ```bash
-GITHUB_PAGES=true npm run build
-npx serve out
+GITHUB_PAGES=true bun run build
+bunx serve out
 # → http://localhost:3000/historia-mexico/
 ```
 
-`tsc --noEmit` and `eslint` should both come back clean.
+`bunx tsc --noEmit` and `bunx eslint .` should both come back
+clean.
 
 ## Deployment
 
 Pushes to `main` are built and deployed to GitHub Pages by
-`.github/workflows/pages.yml`. The site is served under
+`.github/workflows/pages.yml`. The workflow uses
+[`oven-sh/setup-bun@v2`](https://github.com/oven-sh/setup-bun),
+runs `bun install --frozen-lockfile`, then `bun run build` with
+`GITHUB_PAGES=true`. The site is served under
 `/historia-mexico/`; `next.config.ts` gates `output: "export"`,
 `basePath`, `trailingSlash` and `images.unoptimized` behind the
-`GITHUB_PAGES=true` env var the workflow sets, so local builds
-remain at `/` without a prefix.
+`GITHUB_PAGES=true` env var, so local builds remain at `/`
+without a prefix.
 
 To enable Pages the first time: **Settings → Pages → Source →
 GitHub Actions**.
