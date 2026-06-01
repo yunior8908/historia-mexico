@@ -1,63 +1,60 @@
-import Image from "next/image";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { Suspense } from "react";
 
-export default function Home() {
+import { ListView } from "./_components/study/list/ListView";
+import { CATEGORIES, HISTORIA_ENTRIES } from "./_data/historia";
+import { PLANES } from "./_data/planes";
+
+export const metadata: Metadata = {
+  title: "Lista de preguntas",
+  description:
+    "Lista virtualizada con cientos de preguntas y respuestas de Historia de México, agrupadas por categoría y enlazadas a los planes históricos cuando corresponde.",
+};
+
+export default function HomePage() {
+  const planIndex = PLANES.map((plan) => ({
+    slug: plan.slug,
+    name: plan.name,
+    year: plan.year,
+    era: plan.era,
+  }));
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="flex flex-1 justify-center px-4 py-10 md:px-8 md:py-14">
+      <main className="w-full max-w-5xl">
+        <header className="flex items-start justify-between gap-6">
+          <div>
+            <p className="font-display text-[0.78rem] font-semibold uppercase tracking-[0.32em] text-text-muted">
+              Estudiar Historia de México
+            </p>
+            <h1 className="mt-3 font-display text-[2.4rem] font-semibold leading-[1.05] text-text md:text-[3.2rem]">
+              Banco de preguntas
+            </h1>
+            <p className="mt-4 max-w-2xl font-sans text-[0.98rem] text-text-soft">
+              {HISTORIA_ENTRIES.length.toLocaleString("es-MX")} preguntas
+              organizadas en {CATEGORIES.length} categorías. Navega la lista,
+              filtra por categoría o búsqueda, y salta al plan cuando una
+              pregunta lo cita. Flashcards y quiz disponibles arriba.
+            </p>
+          </div>
+
+          <Link
+            href="/planes"
+            className="hidden shrink-0 rounded-md border border-border bg-surface px-4 py-2 font-display text-[0.82rem] uppercase tracking-[0.2em] text-text-soft transition-colors hover:border-border-strong hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-border-strong md:inline-block"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+            Ver planes →
+          </Link>
+        </header>
+
+        <div className="mt-10">
+          <Suspense fallback={null}>
+            <ListView
+              entries={HISTORIA_ENTRIES}
+              categories={CATEGORIES}
+              planIndex={planIndex}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          </Suspense>
         </div>
       </main>
     </div>
