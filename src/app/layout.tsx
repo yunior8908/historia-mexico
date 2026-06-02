@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { RouteTransition } from "./_components/RouteTransition";
 import { cn } from "@/lib/cn";
 import "./globals.css";
 
@@ -35,7 +36,9 @@ export default function RootLayout({
       className={cn(inter.variable, display.variable, "h-full antialiased")}
     >
       <body className="min-h-full flex flex-col">
-        <NuqsAdapter>{children}</NuqsAdapter>
+        <NuqsAdapter>
+          <RouteTransition>{children}</RouteTransition>
+        </NuqsAdapter>
       </body>
     </html>
   );

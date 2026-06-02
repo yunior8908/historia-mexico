@@ -36,6 +36,8 @@ list, flashcards and quiz.
 - `nuqs` for URL-backed state
 - `@tanstack/react-virtual` for windowed rendering of ~540 cards
 - `@tanstack/react-hotkeys` for declarative keyboard shortcuts
+- `motion` (the rebranded `framer-motion`) for the route-change
+  crossfade
 - `clsx` + `tailwind-merge` (combined via `src/lib/cn.ts`) for
   class composition
 
