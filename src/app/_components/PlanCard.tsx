@@ -35,7 +35,7 @@ export const PlanCard = forwardRef<HTMLButtonElement, PlanCardProps>(
           "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-bg",
           dimmed && !active && !highlighted ? "opacity-40" : "opacity-100",
           active || highlighted
-            ? "border-[var(--era-color)] shadow-[0_0_0_1px_var(--era-color)]"
+            ? "border-(--era-color) shadow-[0_0_0_1px_var(--era-color)]"
             : "border-border",
         )}
         style={{

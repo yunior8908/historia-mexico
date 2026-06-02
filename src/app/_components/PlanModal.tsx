@@ -68,7 +68,7 @@ export function PlanModal({ plan, era, related, onClose, onSelect }: PlanDetailP
           type="button"
           onClick={onClose}
           aria-label="Cerrar detalle"
-          className="-mr-2 -mt-1 rounded-md p-2 text-text-soft transition-colors hover:bg-white/5 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--era-color)]"
+          className="-mr-2 -mt-1 rounded-md p-2 text-text-soft transition-colors hover:bg-white/5 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-(--era-color)"
         >
           <svg viewBox="0 0 20 20" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.6">
             <path d="M4 4 L16 16 M16 4 L4 16" />
@@ -134,7 +134,7 @@ export function PlanModal({ plan, era, related, onClose, onSelect }: PlanDetailP
                   <button
                     type="button"
                     onClick={() => onSelect(r.slug)}
-                    className="rounded-md border border-border-strong bg-surface px-3 py-1.5 font-sans text-[0.82rem] text-text-soft transition-colors hover:bg-surface-2 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--era-color)]"
+                    className="rounded-md border border-border-strong bg-surface px-3 py-1.5 font-sans text-[0.82rem] text-text-soft transition-colors hover:bg-surface-2 hover:text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-(--era-color)"
                   >
                     <span className="mr-2 font-display font-semibold text-text">
                       {r.year}

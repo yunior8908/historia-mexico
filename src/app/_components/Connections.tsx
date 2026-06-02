@@ -133,7 +133,7 @@ export function Connections({
   return (
     <svg
       aria-hidden
-      className="pointer-events-none absolute inset-0 z-[1]"
+      className="pointer-events-none absolute inset-0 z-1"
       width={size.w}
       height={size.h}
       viewBox={`0 0 ${size.w || 1} ${size.h || 1}`}

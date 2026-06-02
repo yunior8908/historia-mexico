@@ -147,7 +147,7 @@ export function PlanesGraphic() {
 
   return (
     <>
-      <div className="sticky top-0 z-20 -mx-4 mt-10 bg-bg/85 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-bg/70 md:-mx-8 md:px-8">
+      <div className="sticky top-0 z-20 -mx-4 mt-10 bg-bg/85 px-4 py-3 backdrop-blur supports-backdrop-filter:bg-bg/70 md:-mx-8 md:px-8">
         <EraFilter eras={ERAS} active={active} onSelect={setActive} />
       </div>
 

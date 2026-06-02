@@ -53,7 +53,7 @@ export function Timeline({
         highlightedSlugs={highlightedSlugs}
       />
 
-      <div className="relative z-[2] space-y-5">
+      <div className="relative z-2 space-y-5">
         {eras.map((era) => {
           const plans = (plansByEra[era.id] ?? []).filter((p) =>
             visibleSlugs.has(p.slug),
