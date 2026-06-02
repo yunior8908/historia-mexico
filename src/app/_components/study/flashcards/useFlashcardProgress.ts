@@ -1,8 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useSyncExternalStore } from "react";
 
-import { loadProgress, saveProgress } from "./progress";
+import {
+  getProgressServerSnapshot,
+  getProgressSnapshot,
+  subscribeProgress,
+  updateProgress,
+} from "./progress";
 import type { CardStatus, ProgressMap } from "./types";
 
 type UseFlashcardProgress = {
@@ -14,30 +19,23 @@ type UseFlashcardProgress = {
 };
 
 /**
- * Encapsulates the persisted study progress: hydration from
- * `localStorage` on mount, the in-memory `ProgressMap`, derived
- * counts, and a `mark` / `reset` pair that also writes through to
- * storage.
+ * Encapsulates the persisted study progress: a `useSyncExternalStore`
+ * subscription to the `localStorage`-backed progress module, derived
+ * counts, and `mark` / `reset` callbacks that mutate the store.
  */
 export function useFlashcardProgress(): UseFlashcardProgress {
-  const [progress, setProgress] = useState<ProgressMap>({});
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- platform API (localStorage), runs once on mount
-    setProgress(loadProgress());
-  }, []);
+  const progress = useSyncExternalStore(
+    subscribeProgress,
+    getProgressSnapshot,
+    getProgressServerSnapshot,
+  );
 
   const mark = useCallback((entryId: string, status: CardStatus) => {
-    setProgress((prev) => {
-      const next: ProgressMap = { ...prev, [entryId]: status };
-      saveProgress(next);
-      return next;
-    });
+    updateProgress((prev) => ({ ...prev, [entryId]: status }));
   }, []);
 
   const reset = useCallback(() => {
-    setProgress({});
-    saveProgress({});
+    updateProgress(() => ({}));
   }, []);
 
   const { knownCount, reviewCount } = useMemo(() => {
