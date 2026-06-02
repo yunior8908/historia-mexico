@@ -1,5 +1,10 @@
 {
   "_comment": "Manual curation: question number -> { category, subcategory?, tags?, slug }. Slug is appended to id; tags feed search.",
+  "question_overrides": {
+    "_comment": "Hand-edited question text for items where the PDF lost meaningful whitespace (e.g. fill-in-the-blank gaps). Keys are question numbers as strings; values are the literal question text used in the emitted entry.",
+    "84": "Según la Contradicción de Tesis 293/2011, las sentencias de la Corte Interamericana de Derechos Humanos tienen ___ valor en los casos donde México no es parte en la controversia.",
+    "86": "La competencia ___ le permite a la Corte Interamericana de Derechos Humanos conocer de posibles violaciones a derechos humanos contenidos en la Convención Americana y otros instrumentos, mientras que la competencia ___, a pregunta expresa de los sujetos autorizados, le permite interpretar las disposiciones de la Convención Americana y verificar la compatibilidad de normas internas con las normas internacionales."
+  },
   "questions": {
     "1":   { "category": "prehispanico",         "subcategory": "valle-de-mexico",         "slug": "teotihuacan-florecio-cuicuilco", "tags": ["teotihuacan","cuicuilco","valle-mexico"] },
     "2":   { "category": "prehispanico",         "subcategory": "mexica",                  "slug": "sociedad-nahua-pipiltin-macehual", "tags": ["nahua","mexica","sociedad"] },

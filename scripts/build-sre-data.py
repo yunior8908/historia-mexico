@@ -70,12 +70,24 @@ INLINE_OCR_SUBS = [
     (re.compile(r"\bVersal les\b"), "Versalles"),
     (re.compile(r"\bMIKT A\b"), "MIKTA"),
     (re.compile(r"\bE/llano\b"), "El llano"),
-    (re.compile(r"\bCartero\b"), "Carter"),
+    # The PDF's "Cartero" is "Carter." with the trailing period read
+    # as an 'o' glyph. Drop the spurious 'o' and re-attach the period
+    # so the option ends as a proper sentence.
+    (re.compile(r"\bCartero\b"), "Carter."),
     (re.compile(r"\bE~adonegociado~"), "Estado negociador"),
     (re.compile(r"\bGÓmez\b"), "Gómez"),
     (re.compile(r"\bcontenciosa:\sconsultiva"), "contenciosa; consultiva"),
     (re.compile(r"\bCNogales\b"), "(Nogales"),
     (re.compile(r"\bpreferencial es\b"), "preferenciales"),
+
+    # 9) Insert a space after commas inside date lists where the OCR
+    # consumed it ("1946,1980-1981,2002" -> "1946, 1980-1981, 2002").
+    (re.compile(r"(\d{4}(?:-\d{4})?),(\d{4})"), r"\1, \2"),
+
+    # 10) Normalise spaces around "/" used as separator inside option
+    # text. The OCR is inconsistent ("Fox/Labastida/ Cárdenas"); we
+    # collapse to a single style with no spaces on either side.
+    (re.compile(r"\s*/\s*"), "/"),
 
     # 2) Roman-numeral / number glyph confusions.
     (re.compile(r"\bFrancisco 1\."), "Francisco I."),
@@ -291,7 +303,12 @@ def ts_string(s: str) -> str:
 
 
 def main() -> None:
-    mapping = json.loads(MAPPING.read_text())["questions"]
+    raw_mapping = json.loads(MAPPING.read_text())
+    mapping = raw_mapping["questions"]
+    # Optional per-question hand-overrides. When the PDF lost a
+    # visual cue (e.g. fill-in-the-blank gaps printed as whitespace
+    # between separate text runs), we re-inject the right text here.
+    overrides = raw_mapping.get("question_overrides", {})
     parsed = parse(PDF)
 
     entries: list[str] = []
@@ -313,6 +330,8 @@ def main() -> None:
 
         # Build cleaned strings.
         question = clean_text(block["question"])
+        if str(qn) in overrides:
+            question = overrides[str(qn)]
         cleaned: dict[str, str] = {
             letter: clean_text(text) for letter, text in block["options"].items()
         }

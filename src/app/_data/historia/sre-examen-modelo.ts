@@ -150,10 +150,10 @@ export const sreExamenModelo: HistoriaEntry[] = [
     category: "moderno",
     subcategory: "elecciones",
     question: "Principales candidatos a la presidencia de México en el año 2000:",
-    answer: "Vicente Fox/Francisco Labastida/ Cuauhtémoc Cárdenas.",
+    answer: "Vicente Fox/Francisco Labastida/Cuauhtémoc Cárdenas.",
     choices: {
-      correct: "Vicente Fox/Francisco Labastida/ Cuauhtémoc Cárdenas.",
-      distractors: ["Vicente Fox/ Francisco Labastida/ Andrés Manuel López Obrador.", "Vicente Fox/Roberto Madrazo/ Cuauhtémoc Cárdenas.", "Vicente Fox/ Roberto Madrazo/ Andrés Manuel López Obrador."],
+      correct: "Vicente Fox/Francisco Labastida/Cuauhtémoc Cárdenas.",
+      distractors: ["Vicente Fox/Francisco Labastida/Andrés Manuel López Obrador.", "Vicente Fox/Roberto Madrazo/Cuauhtémoc Cárdenas.", "Vicente Fox/Roberto Madrazo/Andrés Manuel López Obrador."],
     },
     tags: ["2000", "fox", "labastida", "cardenas"],
   },
@@ -429,7 +429,7 @@ export const sreExamenModelo: HistoriaEntry[] = [
     answer: "1946, 1980-1981, 2002-2003 y 2009-2010.",
     choices: {
       correct: "1946, 1980-1981, 2002-2003 y 2009-2010.",
-      distractors: ["1945,1991-1992,2002-2003 y 2009-2010.", "1946,1980-1981,1991-1992 y 2002-2003.", "1946,1980-1981,1991-1992 y 2009-2010."],
+      distractors: ["1945, 1991-1992, 2002-2003 y 2009-2010.", "1946, 1980-1981, 1991-1992 y 2002-2003.", "1946, 1980-1981, 1991-1992 y 2009-2010."],
     },
     tags: ["consejo-seguridad", "onu", "no-permanente"],
   },
@@ -1013,7 +1013,7 @@ export const sreExamenModelo: HistoriaEntry[] = [
     id: "sre-084-pacta-sunt-servanda-vinculante",
     category: "derechoInternacional",
     subcategory: "tratados",
-    question: "Según la Contradicción de Tesis 293/2011, las sentencias de la Corte Interamericana de Derechos Humanos tienen valor en los casos donde México no es parte en la controversia.",
+    question: "Según la Contradicción de Tesis 293/2011, las sentencias de la Corte Interamericana de Derechos Humanos tienen ___ valor en los casos donde México no es parte en la controversia.",
     answer: "vinculante.",
     choices: {
       correct: "vinculante.",
@@ -1037,7 +1037,7 @@ export const sreExamenModelo: HistoriaEntry[] = [
     id: "sre-086-competencia-cij-contenciosa-consultiva",
     category: "derechoInternacional",
     subcategory: "cij",
-    question: "La competencia le permite a la Corte Interamericana de Derechos Humanos conocer de posibles violaciones a derechos humanos contenidos en la Convención Americana y otros instrumentos, mientras que la competencia, a pregunta expresa de los sujetos autorizados, le permite interpretar las disposiciones de la Convención Americana y verificar la compatibilidad de normas internas con las normas internacionales.",
+    question: "La competencia ___ le permite a la Corte Interamericana de Derechos Humanos conocer de posibles violaciones a derechos humanos contenidos en la Convención Americana y otros instrumentos, mientras que la competencia ___, a pregunta expresa de los sujetos autorizados, le permite interpretar las disposiciones de la Convención Americana y verificar la compatibilidad de normas internas con las normas internacionales.",
     answer: "contenciosa; consultiva.",
     choices: {
       correct: "contenciosa; consultiva.",
@@ -1230,9 +1230,9 @@ export const sreExamenModelo: HistoriaEntry[] = [
     category: "mundoContemporaneo",
     subcategory: "guerra-fria",
     question: "Presidentes de Panamá y Estados Unidos que firmaron el tratado por el cual se estableció la transferencia progresiva de la soberanía del Canal de Panamá a completarse en 1999:",
-    answer: "Omar Torrijos y James Carter",
+    answer: "Omar Torrijos y James Carter.",
     choices: {
-      correct: "Omar Torrijos y James Carter",
+      correct: "Omar Torrijos y James Carter.",
       distractors: ["Arístides Royo y Ronald Reagan.", "Guillermo Endara y George Bush.", "Mireya Moscoso y William Clinton."],
     },
     tags: ["torrijos", "carter", "panama", "canal"],
