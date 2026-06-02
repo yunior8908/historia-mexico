@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 
 import { PlanesGraphic } from "../_components/PlanesGraphic";
 
@@ -36,7 +37,9 @@ export default function PlanesPage() {
           </Link>
         </header>
 
-        <PlanesGraphic />
+        <Suspense fallback={null}>
+          <PlanesGraphic />
+        </Suspense>
 
         <footer className="mt-16 border-t border-border pt-6">
           <p className="font-sans text-[0.78rem] text-text-muted">

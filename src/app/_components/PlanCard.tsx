@@ -23,7 +23,6 @@ export const PlanCard = forwardRef<HTMLButtonElement, PlanCardProps>(
       <button
         ref={ref}
         type="button"
-        data-slug={plan.slug}
         onClick={() => onOpen(plan.slug)}
         onMouseEnter={() => onHover(plan.slug)}
         onMouseLeave={() => onHover(null)}

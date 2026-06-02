@@ -15,6 +15,11 @@ type TimelineProps = {
   hoveredSlug: string | null;
   highlightedSlugs: Set<string>;
   erasById: Record<string, EraInfo>;
+  // Map of plan slug -> rendered card element. Owned by
+  // `PlanesGraphic` so it can resolve the deep-link target without
+  // reaching through the DOM. `EraBand` writes into it via a
+  // callback ref, `Connections` reads from it for SVG anchors.
+  cardRefs: React.MutableRefObject<Map<string, HTMLButtonElement | null>>;
   onOpen: (slug: string) => void;
   onHover: (slug: string | null) => void;
 };
@@ -29,11 +34,11 @@ export function Timeline({
   hoveredSlug,
   highlightedSlugs,
   erasById,
+  cardRefs,
   onOpen,
   onHover,
 }: TimelineProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const cardRefs = useRef<Map<string, HTMLButtonElement | null>>(new Map());
 
   return (
     <div ref={containerRef} className="relative mt-8">

@@ -1,61 +1,67 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { ERAS, PLANES, type Era, type EraInfo, type Plan } from "../_data/planes";
+import { parseAsStringLiteral, useQueryState } from "nuqs";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  ERAS,
+  PLANES,
+  type Era,
+  type EraInfo,
+  type Plan,
+} from "../_data/planes";
 import { EraFilter } from "./EraFilter";
 import { PlanModal } from "./PlanModal";
 import { Timeline } from "./Timeline";
 
+// Whitelist of valid `?plan=` values. Anything else coming through
+// the URL is normalised to `null` by `parseAsStringLiteral`.
+const PLAN_SLUGS = PLANES.map((p) => p.slug);
+
 export function PlanesGraphic() {
   const [active, setActive] = useState<Era | "todos">("todos");
-  const [openSlug, setOpenSlug] = useState<string | null>(null);
+
+  // URL-as-state for the open plan. Deep-links (`/planes?plan=<slug>`)
+  // hydrate this on first render, sharing/reload preserve the modal,
+  // and browser back/forward animates between plans for free.
+  const [openSlug, setOpenSlug] = useQueryState(
+    "plan",
+    parseAsStringLiteral(PLAN_SLUGS),
+  );
   const [hoveredSlug, setHoveredSlug] = useState<string | null>(null);
 
-  // Deep-link: if the URL carries `?plan=<slug>`, open that plan on
-  // mount and scroll its card into view. We read
-  // `window.location.search` from `useEffect` (rather than
-  // `useSearchParams`) so the `/` page stays statically rendered
-  // instead of being forced into dynamic mode.
+  // Map of plan slug -> rendered card element, populated by
+  // `EraBand`'s callback ref. Lifted up to this component so the
+  // deep-link scroll effect below can look up the target by slug
+  // (typed, React-owned reference) instead of reaching into the DOM
+  // with `document.querySelector`. `Connections` reads from the same
+  // map to anchor its SVG curves between cards.
+  const cardRefs = useRef<Map<string, HTMLButtonElement | null>>(new Map());
+
+  // When the URL provided a slug on mount, scroll its card into view
+  // exactly once. Clicks on the timeline *after* mount must not yank
+  // the page back to whatever the user just clicked, so we capture
+  // the initial slug in a ref and run the scroll effect with no
+  // dependencies.
+  const initialSlugRef = useRef(openSlug);
+
   useEffect(() => {
-    if (typeof window === "undefined") return;
-    const params = new URLSearchParams(window.location.search);
-    const slug = params.get("plan");
+    const slug = initialSlugRef.current;
     if (!slug) return;
-    const exists = PLANES.some((p) => p.slug === slug);
-    if (!exists) return;
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- reading window.location is a browser API and only runs on mount
-    setOpenSlug(slug);
+    // No `requestAnimationFrame` chain needed: nuqs hydrates
+    // `openSlug` synchronously on the very first render, so by the
+    // time this effect fires the modal column is already mounted
+    // and the page is laid out in its final two-column form. The
+    // route fade-in driven by `RouteTransition` only animates
+    // `opacity`/`transform` — layout coordinates are final from
+    // frame zero, so `getBoundingClientRect` is correct immediately.
+    const card = cardRefs.current.get(slug);
 
-    // Bring the plan card into view. We chain three animation frames:
-    // (1) React commits the openSlug state, (2) the layout reflows
-    // (modal column may have shifted the timeline), and (3) we read
-    // the card's final position before scrolling. Honour
-    // `prefers-reduced-motion` by skipping the smooth easing.
-    const prefersReduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          const card = document.querySelector(`[data-slug="${slug}"]`);
-          if (card instanceof HTMLElement) {
-            card.scrollIntoView({
-              behavior: prefersReduced ? "auto" : "smooth",
-              block: "center",
-            });
-          }
-        });
-      });
+    if (!card) return;
+
+    card.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
     });
-
-    // Strip the query string so a reload or share doesn't trigger
-    // the automatic modal a second time.
-    params.delete("plan");
-    const qs = params.toString();
-    const newUrl = `${window.location.pathname}${qs ? `?${qs}` : ""}${
-      window.location.hash
-    }`;
-    window.history.replaceState(null, "", newUrl);
   }, []);
 
   const erasById = useMemo<Record<string, EraInfo>>(
@@ -76,7 +82,8 @@ export function PlanesGraphic() {
   }, []);
 
   const visiblePlans = useMemo(
-    () => (active === "todos" ? PLANES : PLANES.filter((p) => p.era === active)),
+    () =>
+      active === "todos" ? PLANES : PLANES.filter((p) => p.era === active),
     [active],
   );
 
@@ -99,9 +106,19 @@ export function PlanesGraphic() {
     return set;
   }, [focusSlug, planBySlug]);
 
-  const onOpen = useCallback((slug: string) => setOpenSlug(slug), []);
-  const onClose = useCallback(() => setOpenSlug(null), []);
-  const onHover = useCallback((slug: string | null) => setHoveredSlug(slug), []);
+  const onOpen = useCallback(
+    (slug: string) => {
+      void setOpenSlug(slug);
+    },
+    [setOpenSlug],
+  );
+  const onClose = useCallback(() => {
+    void setOpenSlug(null);
+  }, [setOpenSlug]);
+  const onHover = useCallback(
+    (slug: string | null) => setHoveredSlug(slug),
+    [],
+  );
 
   const openPlan = openSlug ? planBySlug[openSlug] : null;
   const openEra = openPlan ? erasById[openPlan.era] : null;
@@ -111,9 +128,7 @@ export function PlanesGraphic() {
           .map((s) => planBySlug[s])
           .filter((p): p is Plan => Boolean(p)),
         ...PLANES.filter((p) => p.connectsTo.includes(openPlan.slug)),
-      ].filter(
-        (p, i, arr) => arr.findIndex((q) => q.slug === p.slug) === i,
-      )
+      ].filter((p, i, arr) => arr.findIndex((q) => q.slug === p.slug) === i)
     : [];
 
   const isOpen = openPlan !== null;
@@ -141,6 +156,7 @@ export function PlanesGraphic() {
           hoveredSlug={hoveredSlug}
           highlightedSlugs={highlightedSlugs}
           erasById={erasById}
+          cardRefs={cardRefs}
           onOpen={onOpen}
           onHover={onHover}
         />
@@ -151,7 +167,7 @@ export function PlanesGraphic() {
             era={openEra}
             related={related}
             onClose={onClose}
-            onSelect={(s) => setOpenSlug(s)}
+            onSelect={(s) => void setOpenSlug(s)}
           />
         )}
       </div>
