@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
+import { useHotkey } from "@tanstack/react-hotkeys";
+import { motion, useReducedMotion } from "motion/react";
 import type { EraInfo, Plan } from "../_data/planes";
 
 type PlanDetailProps = {
@@ -12,19 +13,24 @@ type PlanDetailProps = {
 };
 
 export function PlanModal({ plan, era, related, onClose, onSelect }: PlanDetailProps) {
-  useEffect(() => {
-    if (!plan) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    document.addEventListener("keydown", onKey);
-    return () => document.removeEventListener("keydown", onKey);
-  }, [plan, onClose]);
+  // Escape dismisses the open modal. The hotkey only fires while the
+  // component is mounted, and `PlanesGraphic` only mounts us when a
+  // plan is open, so we don't need to gate it on `plan` ourselves.
+  useHotkey("Escape", onClose);
+
+  const reduced = useReducedMotion();
 
   if (!plan || !era) return null;
 
   return (
-    <aside
+    <motion.aside
+      // Slight upward slide + fade. Works on both mobile (where the
+      // modal stacks below the timeline) and desktop (right column).
+      // Reduced-motion skips the geometry, keeps a near-instant fade.
+      initial={reduced ? { opacity: 0 } : { opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={reduced ? { opacity: 0 } : { opacity: 0, y: 8 }}
+      transition={{ duration: reduced ? 0.05 : 0.22, ease: "easeOut" }}
       aria-labelledby="plan-detail-title"
       className="relative overflow-hidden rounded-xl border border-border bg-bg-elev lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto"
       style={{ ["--era-color" as string]: era.colorVar }}
@@ -141,6 +147,6 @@ export function PlanModal({ plan, era, related, onClose, onSelect }: PlanDetailP
           </>
         )}
       </div>
-    </aside>
+    </motion.aside>
   );
 }

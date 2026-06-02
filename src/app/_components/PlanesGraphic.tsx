@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence } from "motion/react";
 import { parseAsStringLiteral, useQueryState } from "nuqs";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -133,6 +134,17 @@ export function PlanesGraphic() {
 
   const isOpen = openPlan !== null;
 
+  // The grid switches to two columns only while the modal is visible.
+  // Because `AnimatePresence` keeps `<PlanModal>` mounted during its
+  // exit animation, we keep `isLayoutOpen` true until the exit
+  // finishes; otherwise the parent grid would collapse to `block`
+  // mid-animation and the timeline would reflow under the
+  // departing modal. The render-time setter ("snapshot during
+  // render" pattern) syncs the flag on the next render whenever
+  // `isOpen` flips on, without an extra `useEffect`.
+  const [isLayoutOpen, setIsLayoutOpen] = useState(isOpen);
+  if (isOpen && !isLayoutOpen) setIsLayoutOpen(true);
+
   return (
     <>
       <div className="sticky top-0 z-20 -mx-4 mt-10 bg-bg/85 px-4 py-3 backdrop-blur supports-[backdrop-filter]:bg-bg/70 md:-mx-8 md:px-8">
@@ -141,7 +153,7 @@ export function PlanesGraphic() {
 
       <div
         className={
-          isOpen
+          isLayoutOpen
             ? "grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_24rem] xl:grid-cols-[minmax(0,1fr)_26rem]"
             : "block"
         }
@@ -161,15 +173,18 @@ export function PlanesGraphic() {
           onHover={onHover}
         />
 
-        {isOpen && (
-          <PlanModal
-            plan={openPlan}
-            era={openEra}
-            related={related}
-            onClose={onClose}
-            onSelect={(s) => void setOpenSlug(s)}
-          />
-        )}
+        <AnimatePresence onExitComplete={() => setIsLayoutOpen(false)}>
+          {isOpen && (
+            <PlanModal
+              key="plan-modal"
+              plan={openPlan}
+              era={openEra}
+              related={related}
+              onClose={onClose}
+              onSelect={(s) => void setOpenSlug(s)}
+            />
+          )}
+        </AnimatePresence>
       </div>
     </>
   );
