@@ -27,13 +27,32 @@ export type HistoriaCategory =
   | "deportes"
   | "instituciones"
   | "simbolos"
-  | "educacion";
+  | "educacion"
+  | "politicaExterior"
+  | "derechoInternacional"
+  | "mundoContemporaneo";
 
 export type Correction = {
   /** Answer exactly as it appeared in the source notes. */
   originalAnswer: string;
   /** Short note explaining why the answer was corrected. */
   note: string;
+};
+
+/**
+ * Pre-curated multiple-choice options. When present, the Quiz mode
+ * uses these distractors instead of generating its own from
+ * same-category siblings. Used by entries imported from the SRE
+ * Examen Modelo, where each question shipped with its own four
+ * options.
+ *
+ * `distractors` must contain exactly three strings (the three
+ * incorrect options); `correct` should match `HistoriaEntry.answer`
+ * but is duplicated here for ergonomic shuffling without coupling.
+ */
+export type EntryChoices = {
+  correct: string;
+  distractors: [string, string, string];
 };
 
 export type HistoriaEntry = {
@@ -45,6 +64,8 @@ export type HistoriaEntry = {
   question: string;
   /** Canonical answer (corrected when applicable). */
   answer: string;
+  /** Optional curated MCQ options used by Quiz mode. */
+  choices?: EntryChoices;
   /** Free-form tags for search. */
   tags?: string[];
   /** Matching slug from `src/app/_data/planes.ts` when applicable. */
@@ -164,10 +185,29 @@ export const CATEGORIES: CategoryMeta[] = [
     label: "Personajes",
     description: "Figuras transversales: artistas, científicos, deportistas.",
   },
+  // World, diplomacy and international law (SRE Examen Modelo).
+  {
+    id: "politicaExterior",
+    label: "Política exterior",
+    description:
+      "Doctrinas (Estrada), tratados, organismos multilaterales, IME, MIKTA, COP16.",
+  },
+  {
+    id: "derechoInternacional",
+    label: "Derecho internacional",
+    description:
+      "Convención de Viena, ius cogens, CIJ, CPI, sistema interamericano.",
+  },
+  {
+    id: "mundoContemporaneo",
+    label: "Mundo contemporáneo",
+    description:
+      "Historia mundial moderna, RR.II., comercio internacional, geopolítica.",
+  },
 ];
 
 export type CategoryGroup = {
-  id: "historia" | "estado" | "geografia" | "cultura";
+  id: "historia" | "estado" | "geografia" | "cultura" | "mundo";
   label: string;
   description: string;
   /**
@@ -209,9 +249,15 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
     id: "estado",
     label: "Estado y sociedad",
     description:
-      "Constitución, instituciones, símbolos patrios y educación.",
+      "Constitución, instituciones, símbolos patrios, educación y política exterior.",
     colorVar: "var(--era-postrevolucion)",
-    categoryIds: ["constitucion", "instituciones", "simbolos", "educacion"],
+    categoryIds: [
+      "constitucion",
+      "instituciones",
+      "simbolos",
+      "educacion",
+      "politicaExterior",
+    ],
   },
   {
     id: "geografia",
@@ -228,5 +274,13 @@ export const CATEGORY_GROUPS: CategoryGroup[] = [
       "Gastronomía, artes, deportes y personajes ilustres.",
     colorVar: "var(--era-republica)",
     categoryIds: ["gastronomia", "cultura", "deportes", "personajes"],
+  },
+  {
+    id: "mundo",
+    label: "Mundo y diplomacia",
+    description:
+      "Derecho internacional público, historia mundial moderna y relaciones internacionales.",
+    colorVar: "var(--era-porfiriato)",
+    categoryIds: ["derechoInternacional", "mundoContemporaneo"],
   },
 ];
