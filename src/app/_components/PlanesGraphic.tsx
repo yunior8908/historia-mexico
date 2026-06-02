@@ -12,9 +12,10 @@ export function PlanesGraphic() {
   const [hoveredSlug, setHoveredSlug] = useState<string | null>(null);
 
   // Deep-link: if the URL carries `?plan=<slug>`, open that plan on
-  // mount. We read `window.location.search` from `useEffect` (rather
-  // than `useSearchParams`) so the `/` page stays statically
-  // rendered instead of being forced into dynamic mode.
+  // mount and scroll its card into view. We read
+  // `window.location.search` from `useEffect` (rather than
+  // `useSearchParams`) so the `/` page stays statically rendered
+  // instead of being forced into dynamic mode.
   useEffect(() => {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
@@ -24,6 +25,29 @@ export function PlanesGraphic() {
     if (!exists) return;
     // eslint-disable-next-line react-hooks/set-state-in-effect -- reading window.location is a browser API and only runs on mount
     setOpenSlug(slug);
+
+    // Bring the plan card into view. We chain three animation frames:
+    // (1) React commits the openSlug state, (2) the layout reflows
+    // (modal column may have shifted the timeline), and (3) we read
+    // the card's final position before scrolling. Honour
+    // `prefers-reduced-motion` by skipping the smooth easing.
+    const prefersReduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          const card = document.querySelector(`[data-slug="${slug}"]`);
+          if (card instanceof HTMLElement) {
+            card.scrollIntoView({
+              behavior: prefersReduced ? "auto" : "smooth",
+              block: "center",
+            });
+          }
+        });
+      });
+    });
+
     // Strip the query string so a reload or share doesn't trigger
     // the automatic modal a second time.
     params.delete("plan");
