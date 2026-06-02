@@ -31,6 +31,7 @@ import { ENTRIES_PERSONAJES } from "./personajes";
 import { ENTRIES_PREHISPANICO } from "./prehispanico";
 import { ENTRIES_REVOLUCION } from "./revolucion";
 import { ENTRIES_SIGLO19 } from "./siglo-19";
+import { sreExamenModelo } from "./sre-examen-modelo";
 import { ENTRIES_UNESCO_Y_PUEBLOS } from "./unesco-y-pueblos";
 
 export { CATEGORIES, CATEGORY_GROUPS } from "./types";
@@ -38,6 +39,7 @@ export type {
   CategoryGroup,
   CategoryMeta,
   Correction,
+  EntryChoices,
   HistoriaCategory,
   HistoriaEntry,
 } from "./types";
@@ -57,6 +59,7 @@ export {
   ENTRIES_REVOLUCION,
   ENTRIES_SIGLO19,
   ENTRIES_UNESCO_Y_PUEBLOS,
+  sreExamenModelo,
 };
 
 /**
@@ -80,6 +83,11 @@ export const HISTORIA_ENTRIES: HistoriaEntry[] = [
   ...ENTRIES_CULTURA,
   ...ENTRIES_DEPORTES,
   ...ENTRIES_PERSONAJES,
+  // SRE Examen Modelo questions are merged last so the existing
+  // historical timeline stays at the top of the list. Each entry
+  // carries its own `category`, so the list view still places the
+  // questions in the right thematic block.
+  ...sreExamenModelo,
 ];
 
 /** Returns every entry that belongs to the given category. */
