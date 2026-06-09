@@ -21,12 +21,20 @@ export const SearchBar = forwardRef<HTMLInputElement, SearchBarProps>(
 
     return (
       <div className="relative flex-1">
-        <span
+        <svg
           aria-hidden
-          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 font-sans text-[1rem] text-text-muted"
+          viewBox="0 0 20 20"
+          width="18"
+          height="18"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.6"
+          strokeLinecap="round"
+          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-text-muted"
         >
-          ⌕
-        </span>
+          <circle cx="9" cy="9" r="5.5" />
+          <path d="M13 13 L17 17" />
+        </svg>
         <label htmlFor="study-search" className="sr-only">
           Buscar
         </label>
