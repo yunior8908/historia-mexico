@@ -1,5 +1,6 @@
 import { shuffleArray } from "../shared/shuffle";
 import type { HistoriaEntry } from "../../../_data/historia";
+import { rankDistractors } from "./rankDistractors";
 import { NUM_OPTIONS, type QuizQuestion } from "./types";
 
 /**
@@ -11,10 +12,13 @@ import { NUM_OPTIONS, type QuizQuestion } from "./types";
  * options the exam writer chose. The order is reshuffled per round so
  * the position of the correct answer is not memorisable.
  *
- * Otherwise, distractors are sampled from the pool: same-category
- * entries first (more confusable) with category-foreign fallbacks.
- * Duplicates by `answer` text are filtered so the player never sees
- * the same string twice in one card.
+ * Otherwise, distractors are sampled from the pool and ranked by how
+ * confusable they are with the correct answer (see `rankDistractors`):
+ * same-subcategory / tag-sharing entries win so the player can't rule
+ * options out at a glance. Same-category candidates are still
+ * preferred over category-foreign fallbacks. Duplicates by `answer`
+ * text are filtered so the player never sees the same string twice in
+ * one card.
  */
 export function buildQuestion(
   entry: HistoriaEntry,
@@ -35,7 +39,8 @@ export function buildQuestion(
     };
   }
 
-  // Auto-generated distractors path.
+  // Auto-generated distractors path. Rank same-category candidates by
+  // confusability first, then fall back to (also ranked) foreign ones.
   const sameCat = pool.filter(
     (e) => e.category === entry.category && e.id !== entry.id,
   );
@@ -43,7 +48,9 @@ export function buildQuestion(
     (e) => e.category !== entry.category && e.id !== entry.id,
   );
 
-  const distractorPool = shuffleArray(sameCat).concat(shuffleArray(others));
+  const distractorPool = rankDistractors(entry, sameCat).concat(
+    rankDistractors(entry, others),
+  );
   const seen = new Set<string>([entry.answer]);
   const distractors: string[] = [];
   for (const candidate of distractorPool) {
